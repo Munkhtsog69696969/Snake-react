@@ -46,41 +46,108 @@ function App() {
     setFoodCoordinate(generateFoodCoordinate(9,1))
   },[foodEatenCount]);  
 
+  // console.log(snake)
+
   useInterval(()=>{
     if(direction=="right"){
-      if(snake.left<smallIndex*9){
-        setSnake({top:snake.top , left:snake.left+smallIndex});
+      if(snake[0].left<smallIndex*9){
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:snakeEl.top , left:snakeEl.left+smallIndex})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }else{
-        setSnake({top:snake.top , left:0-smallIndex})
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:snakeEl.top , left:0-smallIndex})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }
     }
 
     if(direction=="down"){
-      if(snake.top<smallIndex*9){
-        setSnake({left:snake.left , top:snake.top+smallIndex});
+      if(snake[0].top<smallIndex*9){
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:snakeEl.top+smallIndex , left:snakeEl.left})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }else{
-        setSnake({left:snake.left , top:0-smallIndex});
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:0-smallIndex , left:snakeEl.left})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }
     }
 
     if(direction=="left"){
-      if(0<=snake.left){
-        setSnake({top:snake.top , left:snake.left-smallIndex});
+      if(0<=snake[0].left){
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:snakeEl.top , left:snakeEl.left-smallIndex})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }else{
-        setSnake({top:snake.top , left:smallIndex*9+smallIndex})
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:snakeEl.top , left:smallIndex*smallIndex})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }
     }
 
     if(direction=="up"){
-      if(0<=snake.top){
-        setSnake({left:snake.left , top:snake.top-smallIndex});
+      if(0<=snake[0].top){
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:snakeEl.top-smallIndex , left:snakeEl.left})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }else{
-        setSnake({left:snake.left , top:smallIndex*9+smallIndex})
+        const newSnake=snake.map((snakeEl,i)=>{
+          if(i==0){
+            return ({top:smallIndex*9+smallIndex , left:snakeEl.left})
+          }else{
+            return ({top:snake[i-1].top , left:snake[i-1].left})
+          }
+        });
+
+        setSnake(newSnake)
       }
     }
 
     if(snake[0]?.top==foodCoordinate?.y*smallIndex && snake[0]?.left==foodCoordinate?.x*smallIndex){
       setFoodEatenCount(prev=>prev+1);
+      setSnake([...snake , {top:snake[snake.length-1].top , left:snake[snake.length-1].left}])
     }
   },500);
 
@@ -104,7 +171,7 @@ function App() {
   return (
     <div className="whole">
       <div ref={mapRef} className="map">
-        {/* {
+        {
           snake && snake.map((snakeEl,i)=>{
             return(
               <div style={{
@@ -117,7 +184,7 @@ function App() {
               }}></div>
             )
           })
-        } */}
+        }
 
         {
           RenderFood()
