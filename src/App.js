@@ -9,7 +9,6 @@ function App() {
   const [smallIndex,setSmallIndex]=useState(null);
   const [snake,setSnake]=useState([{top:0,left:0} , {top:0 , left:smallIndex}]);
   const [direction,setDirection]=useState("right");
-  const [lastDir,setLastDir]=useState("");
   const [foodEatenCount , setFoodEatenCount]=useState(0);
   const [foodCoordinate,setFoodCoordinate]=useState(null);
   const [timeFrame,setTimeFrame]=useState(500);
@@ -23,15 +22,33 @@ function App() {
   useEffect(()=>{
     setMapWidth(mapRef.current.offsetWidth);
     setSmallIndex(mapRef.current.offsetWidth/10);
-    setFoodCoordinate(generateFoodCoordinate(9,1));
+    setFoodCoordinate(generateFoodCoordinate());
   },[]);
 
-  function generateFoodCoordinate(max,min){
-    const foodX=Math.floor((Math.random()*(max-min)+min));
-    const foodY=Math.floor((Math.random()*(max-min)+min));
+  function generateFoodCoordinate(){
+    let foodX=Math.floor((Math.random()*(9-1)+1));
+    let foodY=Math.floor((Math.random()*(9-1)+1));
 
-    return {x:foodX , y:foodY};
+    // let breakLoop=false;
+
+    // while(breakLoop==false){
+    //   let isntEqualToSnakeCoords=0;
+
+    //   snake.map((snakeEl,i)=>{
+    //     if(snakeEl.top/smallIndex!=foodY && snakeEl.left/smallIndex!=foodX){
+    //       isntEqualToSnakeCoords+=1;
+    //     }
+    //   });
+
+    //   if(isntEqualToSnakeCoords==snake.length){
+    //     breakLoop=true;
+    //   }
+    // }
+
+    return {x:foodX , y:foodY}
+
   }
+
 
   const RenderFood=()=>{
     return(
@@ -50,7 +67,7 @@ function App() {
   }
 
   useEffect(()=>{
-    setFoodCoordinate(generateFoodCoordinate(9,1))
+    setFoodCoordinate(generateFoodCoordinate())
   },[foodEatenCount]);  
 
   // console.log(snake)
@@ -172,28 +189,49 @@ function App() {
     }
   },timeFrame);
 
-  console.log(lastDir)
-  useEffect(()=>{
+  // useEffect(()=>{
     window.addEventListener("keydown",(e)=>{
-      if(e.code=="ArrowRight" || e.code=="KeyD"){
-        if(lastDir!="left"){
-          setDirection("right");
+      // setDirection((lastDirection)=>{
+      //   if(e.code=="ArrowRight" || e.code=="KeyD"){
+      //     lastDirection="right"
+      //   }
+      //   if(e.code=="ArrowDown" || e.code=="KeyS"){
+      //     lastDirection="down"
+      //   }
+      //   if(e.code=="ArrowLeft" || e.code=="KeyA"){
+      //     lastDirection="left"
+      //   }
+      //   if(e.code=="ArrowUp" || e.code=="KeyW"){
+      //     lastDirection="up"
+      //   }
+      // })
+      setDirection((prevDirection) => {
+        switch (e.code) {
+          case "ArrowRight":
+            if (prevDirection !== "left") {
+              return "right";
+            }
+            break;
+          case "ArrowLeft":
+            if (prevDirection !== "right") {
+              return "left";
+            }
+            break;
+          case "ArrowUp":
+            if (prevDirection !== "down") {
+              return "up";
+            }
+            break;
+          case "ArrowDown":
+            if (prevDirection !== "up") {
+              return "down";
+            }
+            break;
         }
-      }
-      if(e.code=="ArrowDown" || e.code=="KeyS"){
-        setDirection("down");
-        setLastDir("down")
-      }
-      if(e.code=="ArrowLeft" || e.code=="KeyA"){
-        setDirection("left");
-        setLastDir("left")
-      }
-      if(e.code=="ArrowUp" || e.code=="KeyW"){
-        setDirection("up");
-        setLastDir("up")
-      }
-    })
-  },[]);
+        return prevDirection;
+      });
+    });
+  // },[]);
 
   function SavePlayerScore(){
     if(name!="" && dead==true){
